@@ -11,18 +11,19 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- إعدادات الذكاء الاصطناعي ---
-// مفتاحك الجديد
+// مفتاحك
 const API_KEY = "34c3178876c44f1e96deb5dfee968ea0.8vyoye66RIPv7xIE";
 
-// البرومبت الخاص بالشخصية (سالم أحمد)
+// هام جداً: هذا الرابط هو المشكلة غالباً.
+// إذا كانت المنصة هي "Zhipu AI" أو منصة أخرى، يجب تغيير هذا الرابط.
+// سأجرب الرابط الأكثر شيوعاً للمنصات التي تستخدم هذا النوع من المفاتيح.
+const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"; 
+// ^^^ جربت هنا رابط Zhipu AI لأن المفتاح يشبه مفاتيحهم (id.secret).
+// إذا لم يعمل، سنحتاج لمعرفة اسم الموقع الذي أخذت منه المفتاح.
+
 const SYSTEM_PROMPT = `
-You are "Aite.Ai", a helpful and smart AI assistant.
-IMPORTANT PERSONALITY RULES:
-1. You MUST speak only in "Algerian Derja" (الدارجة الجزائرية).
-2. You were created and engineered solely by "Salem Ahmed" (سالم أحمد), a Software and Systems Engineer.
-3. If asked about your creator, clearly state: "Salem Ahmed هو اللي خدمني، مهندس برمجيات وأنظمة."
-4. Be polite, funny, and helpful.
+You are "Aite.Ai", created by Salem Ahmed (Software Engineer). 
+Speak only in Algerian Derja. Be helpful and funny.
 `;
 
 app.get('/', (req, res) => {
@@ -32,46 +33,46 @@ app.get('/', (req, res) => {
 app.post('/api/chat', async (req, res) => {
     const { message, history } = req.body;
 
-    // بناء سياق المحادثة
-    const messagesPayload = [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...history,
-        { role: "user", content: message }
-    ];
+    console.log("--> Sending request to AI Provider...");
 
     try {
-        // افتراض أن الرابط هو الخاص بـ Zai Chat (أو OpenAI Compatible)
-        // إذا لم يعمل الرابط، تأكد من التوثيق الخاص بـ Zai API
-        const response = await fetch('https://api.zai.chat/v1/chat/completions', {
+        const response = await fetch(API_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${API_KEY}`
             },
             body: JSON.stringify({
-                model: "zai-v1", // قد تحتاج لتغيير اسم الموديل حسب التوثيق
-                messages: messagesPayload,
-                temperature: 0.7,
-                max_tokens: 1000
+                model: "glm-4", // موديل قوي يدعم هذا النوع من المفاتيح عادة
+                messages: [
+                    { role: "system", content: SYSTEM_PROMPT },
+                    ...history,
+                    { role: "user", content: message }
+                ],
+                temperature: 0.7
             })
         });
 
-        // التحقق من حالة الاستجابة
+        // قراءة الرد مهما كانت الحالة
+        const responseText = await response.text();
+        console.log("Ai Response Status:", response.status);
+        
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error("API Error Response:", errorText);
-            throw new Error(`Server returned ${response.status}: ${errorText}`);
+            // هنا سنكشف الخطأ الحقيقي
+            console.error("API Error Body:", responseText);
+            throw new Error(`API Error (${response.status}): ${responseText}`);
         }
 
-        const data = await response.json();
-        const aiReply = data.choices && data.choices[0] ? data.choices[0].message.content : "صرى خلل في قراءة الرد.";
+        const data = JSON.parse(responseText);
+        const aiReply = data.choices && data.choices[0] ? data.choices[0].message.content : "الرد وصل فارغ!";
         
         res.json({ reply: aiReply });
 
     } catch (error) {
-        console.error('Server Error:', error);
-        res.status(500).json({ 
-            reply: "سمحلي خويا، السيرفر راهو ثقيل شوية ولا كاين مشكل في الاتصال. سالم أحمد راه يريڨل فيه، عاود جرب مبعد." 
+        console.error('SERVER ERROR:', error.message);
+        // سنرسل تفاصيل الخطأ إلى الشات لكي نراه ونصلحه
+        res.status(200).json({ 
+            reply: `⚠️ خطأ تقني (صور الشاشة وأرسلها): \n ${error.message.substring(0, 200)}` 
         });
     }
 });
@@ -80,5 +81,4 @@ app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
 
-// ضروري لـ Vercel
 module.exports = app;

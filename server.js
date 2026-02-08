@@ -15,7 +15,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 const API_KEY = "34c3178876c44f1e96deb5dfee968ea0.8vyoye66RIPv7xIE";
 const API_URL = "https://open.bigmodel.cn/api/paas/v4/chat/completions"; 
 
-// إعدادات الشخصية
 const SYSTEM_PROMPT = `
 You are "Aite.Ai", created by "Salem Ahmed" (Software Engineer).
 Speak ONLY in Algerian Derja (الدارجة الجزائرية).
@@ -38,14 +37,15 @@ app.post('/api/chat', async (req, res) => {
                 'Authorization': `Bearer ${API_KEY}`
             },
             body: JSON.stringify({
-                // سنحاول استخدام الموديل القياسي
-                model: "glm-4", 
+                // حسب الصورة اللي بعثتها، هذا هو الموديل المجاني المتاح
+                model: "glm-4-flash", 
                 messages: [
                     { role: "system", content: SYSTEM_PROMPT },
                     ...history,
                     { role: "user", content: message }
                 ],
-                temperature: 0.7
+                temperature: 0.7,
+                stream: false
             })
         });
 
@@ -53,7 +53,6 @@ app.post('/api/chat', async (req, res) => {
 
         if (data.error) {
             console.error("API Error:", data.error);
-            // إذا فشل glm-4، سنرسل رسالة خطأ واضحة
             throw new Error(data.error.message);
         }
 
@@ -63,7 +62,7 @@ app.post('/api/chat', async (req, res) => {
     } catch (error) {
         console.error('SERVER ERROR:', error.message);
         res.json({ 
-            reply: `سمحلي خو، كاين مشكل: ${error.message}. (جربنا glm-4 وما مشاش).` 
+            reply: `سمحلي خو، كاين مشكل: ${error.message}` 
         });
     }
 });

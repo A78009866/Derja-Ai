@@ -8,67 +8,67 @@
     <style>
         :root {
             --primary-color: #4f46e5;
-            --glass-white: rgba(255, 255, 255, 0.25);
-            --glass-border-white: rgba(255, 255, 255, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.4);
             --text-color: #1f2937;
-            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --msg-user: #4f46e5;
             --msg-ai: rgba(255, 255, 255, 0.6);
-            --sidebar-bg: rgba(255, 255, 255, 0.15);
+            --sidebar-bg: rgba(255, 255, 255, 0.2);
         }
 
         [data-theme="dark"] {
             --primary-color: #6366f1;
-            --glass-white: rgba(20, 20, 20, 0.6);
-            --glass-border-white: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.15);
             --text-color: #e5e7eb;
-            /* أسود غامق تماما */
-            --bg-gradient: #000000; 
+            /* أسود غامق تماماً */
+            --bg-color: #000000; 
             --msg-user: #6366f1;
             --msg-ai: rgba(40, 40, 40, 0.8);
-            --sidebar-bg: rgba(0, 0, 0, 0.5);
+            --sidebar-bg: rgba(10, 10, 10, 0.8);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
 
         body {
-            background: var(--bg-gradient);
+            background: var(--bg-color);
             height: 100vh;
             display: flex;
             color: var(--text-color);
-            transition: background 0.5s ease;
+            transition: background 0.3s ease;
             overflow: hidden;
         }
 
-        /* Login Screen */
+        /* شاشة الدخول */
         #login-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-gradient);
+            background: var(--bg-color);
             z-index: 1000;
             display: flex;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(20px);
         }
 
         .login-card {
-            background: var(--glass-white);
-            padding: 2rem;
+            background: var(--glass-bg);
+            padding: 2.5rem;
             border-radius: 20px;
-            border: 1px solid var(--glass-border-white);
+            border: 1px solid var(--glass-border);
             text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            width: 300px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            width: 90%;
+            max-width: 350px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
         .google-btn {
             background: white;
             color: #333;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
@@ -78,70 +78,85 @@
             gap: 10px;
             width: 100%;
             margin-top: 20px;
+            font-size: 1rem;
             transition: transform 0.2s;
         }
-        .google-btn:hover { transform: scale(1.05); }
+        .google-btn:hover { transform: scale(1.02); }
 
-        /* Main App Layout */
+        /* التطبيق الرئيسي */
         #app-container {
             display: flex;
             width: 100%;
             height: 100%;
-            opacity: 0; /* Hidden until login */
+            opacity: 0;
             transition: opacity 0.5s;
         }
 
-        /* Sidebar */
+        /* القائمة الجانبية */
         .sidebar {
             width: 260px;
             background: var(--sidebar-bg);
-            backdrop-filter: blur(15px);
-            border-left: 1px solid var(--glass-border-white);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
             padding: 1rem;
-            transition: width 0.3s;
+            transition: transform 0.3s;
+        }
+
+        /* للأجهزة الصغيرة */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                height: 100%;
+                right: 0;
+                transform: translateX(100%);
+                z-index: 100;
+            }
+            .sidebar.active { transform: translateX(0); }
         }
 
         .new-chat-btn {
-            background: var(--glass-border-white);
-            border: 1px solid var(--glass-border-white);
+            background: var(--glass-border);
+            border: 1px solid var(--glass-border);
             color: var(--text-color);
             padding: 12px;
             border-radius: 10px;
             cursor: pointer;
-            text-align: right;
+            text-align: center;
             margin-bottom: 20px;
-            transition: background 0.3s;
+            font-weight: bold;
         }
-        .new-chat-btn:hover { background: rgba(255,255,255,0.2); }
+        .new-chat-btn:hover { filter: brightness(1.2); }
 
         .history-list {
             flex: 1;
             overflow-y: auto;
+            margin-bottom: 10px;
         }
 
         .history-item {
-            padding: 10px;
-            margin-bottom: 5px;
+            padding: 12px;
+            margin-bottom: 8px;
             border-radius: 8px;
             cursor: pointer;
-            opacity: 0.8;
+            background: rgba(255,255,255,0.05);
+            font-size: 0.9rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .history-item:hover { background: var(--glass-border-white); opacity: 1; }
+        .history-item:hover { background: var(--glass-border); }
 
         .theme-toggle {
-            margin-top: auto;
             cursor: pointer;
             padding: 10px;
             text-align: center;
-            font-size: 1.2rem;
+            background: var(--glass-border);
+            border-radius: 8px;
         }
 
-        /* Chat Area */
+        /* منطقة الشات */
         .chat-area {
             flex: 1;
             display: flex;
@@ -150,13 +165,19 @@
         }
 
         .header {
-            padding: 1rem;
+            padding: 15px;
             text-align: center;
             font-weight: bold;
-            font-size: 1.2rem;
-            border-bottom: 1px solid var(--glass-border-white);
-            background: rgba(255,255,255,0.05);
+            font-size: 1.1rem;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        
+        .menu-btn { display: none; background: none; border: none; color: inherit; font-size: 1.5rem; cursor: pointer; }
+        @media (max-width: 768px) { .menu-btn { display: block; } }
 
         .messages-container {
             flex: 1;
@@ -168,67 +189,65 @@
         }
 
         .message {
-            max-width: 80%;
-            padding: 12px 18px;
-            border-radius: 15px;
-            line-height: 1.5;
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.6;
             position: relative;
             animation: fadeIn 0.3s ease;
+            word-wrap: break-word;
         }
 
         .message.user {
             align-self: flex-end;
             background: var(--msg-user);
             color: white;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 2px;
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 4px;
         }
 
         .message.ai {
             align-self: flex-start;
             background: var(--msg-ai);
             color: var(--text-color);
-            border: 1px solid var(--glass-border-white);
-            border-bottom-left-radius: 2px;
-            backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            border-bottom-left-radius: 4px;
         }
 
-        /* Input Area */
         .input-area {
-            padding: 20px;
-            background: transparent;
+            padding: 15px;
             display: flex;
             justify-content: center;
+            background: rgba(0,0,0,0.02);
         }
 
         .input-wrapper {
-            width: 90%;
+            width: 100%;
             max-width: 800px;
             position: relative;
+            display: flex;
+            gap: 10px;
         }
 
         input[type="text"] {
-            width: 100%;
-            padding: 15px 50px 15px 20px;
-            border-radius: 15px;
-            border: 1px solid var(--glass-border-white);
-            background: var(--glass-white);
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
             color: var(--text-color);
             backdrop-filter: blur(10px);
             outline: none;
             font-size: 1rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         
         button.send-btn {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
+            padding: 0 20px;
+            border-radius: 12px;
             border: none;
+            background: var(--primary-color);
+            color: white;
             cursor: pointer;
-            color: var(--text-color);
             font-size: 1.2rem;
         }
 
@@ -236,18 +255,12 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: rgba(100,100,100,0.3); border-radius: 4px; }
     </style>
 </head>
-<body data-theme="light">
-
-    <div id="login-screen">
+<body data-theme="dark"> <div id="login-screen">
         <div class="login-card">
-            <h2>مرحباً في Aite.Ai</h2>
-            <p>سجل دخول باش تقدر تهدر معاي</p>
+            <h2>Aite.Ai</h2>
+            <p style="margin: 10px 0; font-size: 0.9rem; opacity: 0.8;">الذكاء الاصطناعي الجزائري<br>من برمجة سالم أحمد</p>
             <button class="google-btn" id="loginBtn">
                 <span>G</span> تسجيل الدخول بغوغل
             </button>
@@ -255,25 +268,29 @@
     </div>
 
     <div id="app-container">
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <button class="new-chat-btn" onclick="startNewChat()">+ محادثة جديدة</button>
-            <div class="history-list" id="historyList">
-                </div>
+            <div class="history-list" id="historyList"></div>
             <div class="theme-toggle" onclick="toggleTheme()">
-                🌓 تبديل المظهر
+                تبديل المظهر 🌓
             </div>
         </div>
 
         <div class="chat-area">
-            <div class="header">Aite.Ai (by Salem Ahmed)</div>
+            <div class="header">
+                <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+                <span>Aite.Ai (Salem Ahmed)</span>
+                <div style="width: 24px;"></div> </div>
+            
             <div class="messages-container" id="messages">
                 <div class="message ai">
-                    واش خويا! أنا Aite.Ai، خدمني المهندس سالم أحمد. واش نقدر نعاونك اليوم؟
+                    واش خو! أنا Aite.Ai، خادمني المهندس سالم أحمد. واش خصك اليوم؟
                 </div>
             </div>
+
             <div class="input-area">
                 <div class="input-wrapper">
-                    <input type="text" id="userInput" placeholder="اكتب ميساج هنا..." onkeypress="handleEnter(event)">
+                    <input type="text" id="userInput" placeholder="اكتب ميساج..." onkeypress="handleEnter(event)">
                     <button class="send-btn" onclick="sendMessage()">➤</button>
                 </div>
             </div>
@@ -282,9 +299,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
 
+        // إعدادات Firebase الخاصة بك
         const firebaseConfig = {
             apiKey: "AIzaSyC8Ea0p8KXudJWyt8_olKrGBjI52P9EoEM",
             authDomain: "ahmed-88be9.firebaseapp.com",
@@ -301,44 +319,45 @@
         const provider = new GoogleAuthProvider();
         const analytics = getAnalytics(app);
 
-        // Login Logic
+        // --- منطق تسجيل الدخول (Redirect لحل مشاكل الحظر) ---
         const loginBtn = document.getElementById('loginBtn');
-        const loginScreen = document.getElementById('login-screen');
-        const appContainer = document.getElementById('app-container');
-
+        
         loginBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider)
-                .then((result) => {
-                    console.log("Logged in:", result.user);
-                }).catch((error) => {
-                    console.error("Login failed:", error);
-                    alert("صرى مشكل في الدخول: " + error.message);
-                });
+            // استخدام Redirect بدلاً من Popup
+            signInWithRedirect(auth, provider);
         });
 
-        // Auth State Listener
+        // التحقق من حالة الدخول عند تحميل الصفحة
         onAuthStateChanged(auth, (user) => {
+            const loginScreen = document.getElementById('login-screen');
+            const appContainer = document.getElementById('app-container');
+            
             if (user) {
+                console.log("User logged in:", user.displayName);
                 loginScreen.style.display = 'none';
                 appContainer.style.opacity = '1';
+                window.currentUser = user;
                 loadChatHistory();
             } else {
-                loginScreen.style.display = 'flex';
-                appContainer.style.opacity = '0';
+                // إذا لم يكن مسجلاً، نتحقق إذا كان عائداً من Redirect
+                getRedirectResult(auth)
+                    .then((result) => {
+                        if (!result) {
+                            loginScreen.style.display = 'flex';
+                            appContainer.style.opacity = '0';
+                        }
+                    }).catch((error) => {
+                        console.error("Login Error:", error);
+                        alert("حدث خطأ في التسجيل: " + error.message);
+                    });
             }
         });
-
-        // Global User object
-        window.currentUser = null;
-        onAuthStateChanged(auth, u => window.currentUser = u);
-
     </script>
 
     <script>
         let currentChatId = Date.now();
         let chats = JSON.parse(localStorage.getItem('aite_chats')) || {};
 
-        // Theme Logic
         function toggleTheme() {
             const body = document.body;
             if (body.getAttribute('data-theme') === 'light') {
@@ -348,29 +367,34 @@
             }
         }
 
-        // Chat Logic
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
         function startNewChat() {
             currentChatId = Date.now();
             document.getElementById('messages').innerHTML = `
                 <div class="message ai">
-                    واش خويا! أنا Aite.Ai، خدمني المهندس سالم أحمد. واش نقدر نعاونك اليوم؟
+                    واش خو! أنا Aite.Ai، خادمني المهندس سالم أحمد. واش خصك اليوم؟
                 </div>
             `;
-            // لا نحفظ حتى يرسل المستخدم رسالة
+            if (window.innerWidth <= 768) toggleSidebar();
         }
 
         function loadChatHistory() {
             const list = document.getElementById('historyList');
             list.innerHTML = '';
-            const sortedKeys = Object.keys(chats).sort((a, b) => b - a); // Newest first
+            const sortedKeys = Object.keys(chats).sort((a, b) => b - a);
             
             sortedKeys.forEach(id => {
                 const div = document.createElement('div');
                 div.className = 'history-item';
-                // العنوان هو أول رسالة للمستخدم أو "محادثة جديدة"
-                const title = chats[id][0] ? chats[id][0].content : 'محادثة';
+                const title = chats[id][0] ? chats[id][0].content : 'محادثة فارغة';
                 div.textContent = title.substring(0, 30) + (title.length > 30 ? '...' : '');
-                div.onclick = () => loadChat(id);
+                div.onclick = () => {
+                    loadChat(id);
+                    if (window.innerWidth <= 768) toggleSidebar();
+                };
                 list.appendChild(div);
             });
         }
@@ -379,12 +403,10 @@
             currentChatId = id;
             const messagesDiv = document.getElementById('messages');
             messagesDiv.innerHTML = '';
-            
             const chatLog = chats[id] || [];
             
-            // Reconstruct chat
             if (chatLog.length === 0) {
-                 messagesDiv.innerHTML = `<div class="message ai">واش خويا! أنا Aite.Ai، خدمني المهندس سالم أحمد.</div>`;
+                 messagesDiv.innerHTML = `<div class="message ai">واش خو! أنا Aite.Ai.</div>`;
             }
 
             chatLog.forEach(msg => {
@@ -404,7 +426,7 @@
                 if (!chats[currentChatId]) chats[currentChatId] = [];
                 chats[currentChatId].push({ role: sender, content: text });
                 localStorage.setItem('aite_chats', JSON.stringify(chats));
-                if (chats[currentChatId].length === 1) loadChatHistory(); // Update sidebar on first msg
+                if (chats[currentChatId].length === 1) loadChatHistory();
             }
         }
 
@@ -417,23 +439,27 @@
             const text = input.value.trim();
             if (!text) return;
 
-            // 1. Show User Message
             appendMessage('user', text);
             input.value = '';
 
-            // 2. Prepare History for Context
-            const history = chats[currentChatId] ? chats[currentChatId].map(m => ({
-                role: m.role === 'user' ? 'user' : 'assistant',
-                content: m.content
-            })) : [];
+            // سياق المحادثة (آخر 10 رسائل فقط لتوفير التوكنز)
+            let history = [];
+            if (chats[currentChatId]) {
+                history = chats[currentChatId].slice(-10).map(m => ({
+                    role: m.role === 'user' ? 'user' : 'assistant',
+                    content: m.content
+                }));
+            }
 
-            // 3. Call Server API
-            // إضافة مؤشر كتابة وهمي
+            // مؤشر التحميل
+            const loadingId = 'loading-' + Date.now();
+            const messagesDiv = document.getElementById('messages');
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'message ai';
             loadingDiv.innerText = 'راه يكتب...';
-            loadingDiv.id = 'loadingMsg';
-            document.getElementById('messages').appendChild(loadingDiv);
+            loadingDiv.id = loadingId;
+            messagesDiv.appendChild(loadingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
             try {
                 const response = await fetch('/api/chat', {
@@ -443,16 +469,18 @@
                 });
 
                 const data = await response.json();
+                document.getElementById(loadingId).remove();
                 
-                // Remove loading
-                document.getElementById('loadingMsg').remove();
-                
-                // Show AI Response
-                appendMessage('ai', data.reply);
+                if (data.reply) {
+                    appendMessage('ai', data.reply);
+                } else {
+                    appendMessage('ai', "حدث خطأ غير متوقع.");
+                }
 
             } catch (error) {
-                document.getElementById('loadingMsg').remove();
-                appendMessage('ai', "سمحلي، كاين مشكل في الريزو.");
+                document.getElementById(loadingId).remove();
+                appendMessage('ai', "سمحلي خويا، كاين مشكل في الاتصال.");
+                console.error(error);
             }
         }
     </script>

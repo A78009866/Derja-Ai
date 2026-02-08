@@ -40,56 +40,11 @@
             overflow: hidden;
         }
 
-        /* شاشة الدخول */
-        #login-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-card {
-            background: var(--glass-bg);
-            padding: 2.5rem;
-            border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            text-align: center;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            width: 90%;
-            max-width: 350px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .google-btn {
-            background: white;
-            color: #333;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            margin-top: 20px;
-            font-size: 1rem;
-            transition: transform 0.2s;
-        }
-        .google-btn:hover { transform: scale(1.02); }
-
         /* التطبيق الرئيسي */
         #app-container {
             display: flex;
             width: 100%;
             height: 100%;
-            opacity: 0;
-            transition: opacity 0.5s;
         }
 
         /* القائمة الجانبية */
@@ -104,7 +59,6 @@
             transition: transform 0.3s;
         }
 
-        /* للأجهزة الصغيرة */
         @media (max-width: 768px) {
             .sidebar {
                 position: absolute;
@@ -170,7 +124,7 @@
             font-weight: bold;
             font-size: 1.1rem;
             border-bottom: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.05);
+            background: rgba(255,255,255,0.02);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -257,15 +211,7 @@
         }
     </style>
 </head>
-<body data-theme="dark"> <div id="login-screen">
-        <div class="login-card">
-            <h2>Aite.Ai</h2>
-            <p style="margin: 10px 0; font-size: 0.9rem; opacity: 0.8;">الذكاء الاصطناعي الجزائري<br>من برمجة سالم أحمد</p>
-            <button class="google-btn" id="loginBtn">
-                <span>G</span> تسجيل الدخول بغوغل
-            </button>
-        </div>
-    </div>
+<body data-theme="dark">
 
     <div id="app-container">
         <div class="sidebar" id="sidebar">
@@ -280,7 +226,8 @@
             <div class="header">
                 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
                 <span>Aite.Ai (Salem Ahmed)</span>
-                <div style="width: 24px;"></div> </div>
+                <div style="width: 24px;"></div> 
+            </div>
             
             <div class="messages-container" id="messages">
                 <div class="message ai">
@@ -297,66 +244,16 @@
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics.js";
-
-        // إعدادات Firebase الخاصة بك
-        const firebaseConfig = {
-            apiKey: "AIzaSyC8Ea0p8KXudJWyt8_olKrGBjI52P9EoEM",
-            authDomain: "ahmed-88be9.firebaseapp.com",
-            databaseURL: "https://ahmed-88be9-default-rtdb.firebaseio.com",
-            projectId: "ahmed-88be9",
-            storageBucket: "ahmed-88be9.firebasestorage.app",
-            messagingSenderId: "152065600130",
-            appId: "1:152065600130:web:1824f21e11207e0edee29b",
-            measurementId: "G-5VN0LTLNGX"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-        const analytics = getAnalytics(app);
-
-        // --- منطق تسجيل الدخول (Redirect لحل مشاكل الحظر) ---
-        const loginBtn = document.getElementById('loginBtn');
-        
-        loginBtn.addEventListener('click', () => {
-            // استخدام Redirect بدلاً من Popup
-            signInWithRedirect(auth, provider);
-        });
-
-        // التحقق من حالة الدخول عند تحميل الصفحة
-        onAuthStateChanged(auth, (user) => {
-            const loginScreen = document.getElementById('login-screen');
-            const appContainer = document.getElementById('app-container');
-            
-            if (user) {
-                console.log("User logged in:", user.displayName);
-                loginScreen.style.display = 'none';
-                appContainer.style.opacity = '1';
-                window.currentUser = user;
-                loadChatHistory();
-            } else {
-                // إذا لم يكن مسجلاً، نتحقق إذا كان عائداً من Redirect
-                getRedirectResult(auth)
-                    .then((result) => {
-                        if (!result) {
-                            loginScreen.style.display = 'flex';
-                            appContainer.style.opacity = '0';
-                        }
-                    }).catch((error) => {
-                        console.error("Login Error:", error);
-                        alert("حدث خطأ في التسجيل: " + error.message);
-                    });
-            }
-        });
-    </script>
-
     <script>
+        // إعداد المتغيرات
         let currentChatId = Date.now();
-        let chats = JSON.parse(localStorage.getItem('aite_chats')) || {};
+        // تحميل المحادثات من LocalStorage
+        let chats = JSON.parse(localStorage.getItem('aite_chats_guest')) || {};
+
+        // تشغيل عند البداية
+        document.addEventListener('DOMContentLoaded', () => {
+            loadChatHistory();
+        });
 
         function toggleTheme() {
             const body = document.body;
@@ -425,7 +322,8 @@
             if (save) {
                 if (!chats[currentChatId]) chats[currentChatId] = [];
                 chats[currentChatId].push({ role: sender, content: text });
-                localStorage.setItem('aite_chats', JSON.stringify(chats));
+                // الحفظ في LocalStorage
+                localStorage.setItem('aite_chats_guest', JSON.stringify(chats));
                 if (chats[currentChatId].length === 1) loadChatHistory();
             }
         }
@@ -442,7 +340,6 @@
             appendMessage('user', text);
             input.value = '';
 
-            // سياق المحادثة (آخر 10 رسائل فقط لتوفير التوكنز)
             let history = [];
             if (chats[currentChatId]) {
                 history = chats[currentChatId].slice(-10).map(m => ({
@@ -451,7 +348,6 @@
                 }));
             }
 
-            // مؤشر التحميل
             const loadingId = 'loading-' + Date.now();
             const messagesDiv = document.getElementById('messages');
             const loadingDiv = document.createElement('div');
